@@ -1,0 +1,56 @@
+import java.util.*;
+
+class Solution {
+
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+
+        List<List<Integer>> adj = new ArrayList<>();
+
+        for (int i = 0; i < numCourses; i++) {
+            adj.add(new ArrayList<>());
+        }
+
+        int[] indegree = new int[numCourses];
+
+        // Build graph
+        for (int[] prerequisite : prerequisites) {
+
+            int course = prerequisite[0];
+            int pre = prerequisite[1];
+
+            adj.get(pre).add(course);
+            indegree[course]++;
+        }
+
+        Queue<Integer> queue = new LinkedList<>();
+
+        // Add courses with indegree 0
+        for (int i = 0; i < numCourses; i++) {
+
+            if (indegree[i] == 0) {
+                queue.offer(i);
+            }
+        }
+
+        int completedCourses = 0;
+
+        // BFS
+        while (!queue.isEmpty()) {
+
+            int current = queue.poll();
+
+            completedCourses++;
+
+            for (int neighbor : adj.get(current)) {
+
+                indegree[neighbor]--;
+
+                if (indegree[neighbor] == 0) {
+                    queue.offer(neighbor);
+                }
+            }
+        }
+
+        return completedCourses == numCourses;
+    }
+}
